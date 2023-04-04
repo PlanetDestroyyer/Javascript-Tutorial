@@ -1,0 +1,158 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+ 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Document</title> 
+    <!-- sheetJS ka script --> 
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script> 
+ 
+</head> 
+ 
+<body> 
+    <!-- ise input se file select hogi execl ki--> 
+    <input type="file" id="file-input"> 
+    <!-- ye div show karega excel file ka data iska use nahi karenge --> 
+    <div id="data-container"></div> 
+    <!-- ye table mene banayi hi jo tumko chaiye tha --> 
+    <div class="table"> 
+        <style> 
+            table { 
+                margin: 20px; 
+                background-color: whitesmoke; 
+                transition: all 0.5s ease; 
+            } 
+ 
+            tr { 
+                border: 1px solid #000; 
+            } 
+ 
+            tr:nth-child(even) { 
+                background-color: rgb(233, 233, 233); 
+ 
+            } 
+ 
+            th, 
+            td { 
+                padding: 5px 15px; 
+                border: 1px 0px 1px 0px solid #000; 
+            } 
+        </style> 
+        <table> 
+            <tr> 
+                <!-- ye table row hai isme table heading hogi --> 
+                <th>ITEM NAME</th> 
+                <th>COUNTRY/REGION</th> 
+                <th>ASSIGNMENT GROUP</th> 
+            </tr> 
+            <!--aese tr hame utne banane hai jitni sheets hai  --> 
+            <tr> 
+                <!-- ye table row hai sheet 1 ke liye jo ki haii empoyee tr computer ise automate kar sakte hai par ata nahi karna to khud hi bana dyiye --> 
+                <td>Employee Transfer - Computer</td> 
+                <!-- ye input hai jaha par location type hoga or fir input function me jayega --> 
+                <td><input id="comCOMPANY" oninput="Maker(this.value ,this.id)" type="text"></td> 
+                <!-- ye vo jagah hai jaha country related company name ayega js se  --> 
+                <td id="computerAG"></td> 
+            </tr> 
+            <tr> 
+                <td>Active Directory</td> 
+                <td><input id="activeCOMPANY" oninput="Maker(this.value ,this.id)" type="text"></td> 
+                <td id="activeAG"> </td> 
+            </tr> 
+            <tr> 
+                <td>Desk Phone Extension</td> 
+                <td><input id="DeskCOMPANY" oninput="Maker(this.value ,this.id)" type="text"></td> 
+                <td id="DeskAG"> </td> 
+            </tr> 
+            <tr> 
+                <td>Employee Transfer -Asset Return</td> 
+                <td><input id="EmpCOMPANY" oninput="Maker(this.value ,this.id)" type="text"></td> 
+                <td id="EmpAG"> </td> 
+            </tr> 
+        </table> 
+    </div> 
+    <style> 
+        /* .sugg{ 
+            position: absolute; 
+            right: 5px ; 
+            top : 10px; 
+            background-color: aqua; 
+            height: 300px; 
+            width: 300px; 
+        } */ 
+    </style> 
+    <div class="sugg"> 
+ 
+    </div> 
+    <!-- apni script --> 
+    <!-- ye hai javascrpit ab yaha se  -->
+    <script> 
+        const fileInput = document.getElementById("file-input"); //file input 
+        const dataContainer = document.getElementById("data-container"); //div 
+        const sheets = {}; //isme sheets ayegi 
+ 
+        fileInput.addEventListener("change", (event) => { 
+            //fie input me jaise hi file ayegi ye chalega 
+            const file = event.target.files[0]; //input ki pahli file 
+            const reader = new FileReader(); //nahi pata 
+ 
+            reader.onload = (event) => { 
+                const data = event.target.result; 
+                const workbook = XLSX.read(data, { type: "binary" }); 
+                const sheetNames = workbook.SheetNames; 
+ 
+                sheetNames.forEach((sheetName) => { 
+                    const sheet = workbook.Sheets[sheetName]; 
+                    const jsonData = XLSX.utils.sheet_to_json(sheet); 
+                    sheets[sheetName] = jsonData; 
+                    // yaha tak sheet js ne file padhkar use rakh liya hia
+}); 
+            }; 
+ 
+            reader.readAsBinaryString(file); 
+        }); 
+ 
+        function Maker(value, id) { 
+            let SsheetName; 
+            let outputL; 
+            let computerAG = document.getElementById("computerAG"); 
+            let activeAG = document.getElementById("activeAG"); 
+            let DeskAG = document.getElementById("DeskAG"); 
+            let EmpAG = document.getElementById("EmpAG"); 
+            if (id == "comCOMPANY") { 
+                SsheetName = "Employee Transfer - Computer"; 
+                console.log(sheets[SsheetName]); 
+                outputL = computerAG; 
+            } else if (id == "activeCOMPANY") { 
+                SsheetName = " Active Directory"; 
+                console.log(sheets[SsheetName]); 
+                outputL = activeAG; 
+            } else if (id == "DeskCOMPANY") { 
+                SsheetName = "Desk Phone Extension"; 
+                console.log(sheets[SsheetName]); 
+                outputL = DeskAG; 
+            } else if (id == "EmpCOMPANY") { 
+                SsheetName = "Employee Transfer-Asset Returns"; 
+                console.log(sheets[SsheetName]); 
+                outputL = EmpAG; 
+            } 
+ 
+            for (let i = 0; i < sheets[SsheetName].length; i++) { 
+                for (let key in sheets[SsheetName][i]) { 
+                    if ( 
+                        sheets[SsheetName][i][key].toLowerCase() === value.trim().toLowerCase() 
+                    ) { 
+                        outputL.innerHTML = sheets[SsheetName][i]["ASSIGNMENT GROUP "]; 
+                        console.log(sheets[SsheetName][i]["ASSIGNMENT GROUP "]); 
+                    } 
+                } 
+            } 
+        } 
+ 
+    </script>
+     <!--yaha tak  --> 
+</body> 
+ 
+</html>
